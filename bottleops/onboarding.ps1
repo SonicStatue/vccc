@@ -257,17 +257,17 @@ try {
     $hmail.Authenticate($HmailAdminUser, $adminPass)
     Write-Host "Connected to hMailServer successfully."
 
-    Write-Host "Domain count returned by hMailServer: $($hmail.Domains.Count)"
+    # Write-Host "Domain count returned by hMailServer: $($hmail.Domains.Count)"
 
     $domain = $null
 
     for ($i = 0; $i -lt $hmail.Domains.Count; $i++) {
         $d = $hmail.Domains.Item($i)
-        Write-Host ("Found hMailServer domain [{0}]: [{1}]" -f $i, $d.Name)
+       # Write-Host ("Found hMailServer domain [{0}]: [{1}]" -f $i, $d.Name)
 
         if ($d.Name -ieq $MailDomain) {
             $domain = $d
-            Write-Host "Matched target mail domain: [$MailDomain]"
+            # Write-Host "Matched target mail domain: [$MailDomain]"
             break
         }
     }
