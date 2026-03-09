@@ -50,8 +50,7 @@ foreach ($folderName in $foldersToCreate) {
 
     if (-not $existing.ContainsKey($folderName.ToLower())) {
 
-        $newFolder = $account.IMAPFolders.Add()
-        $newFolder.Name = $folderName
+        $newFolder = $account.IMAPFolders.Add($folderName)
         $newFolder.Save()
 
         Write-Host "Created folder: $folderName"
