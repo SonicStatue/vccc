@@ -244,21 +244,43 @@ else {
 # =========================
 Write-Host ""
 Write-Host "=== Step 2: hMailServer ==="
+Write-Host "MailDomain is: [$MailDomain]"
 
 try {
-    $hmail = Get-HMailConnection
-    $domain = Get-HMailDomainByName -Hmail $hmail -DomainName $MailDomain
+    $adminPass = Read-PlaintextPassword "Enter hMailServer Administrator password"
+
+    $hmail = New-Object -ComObject hMailServer.Application
+    if (-not $hmail) {
+        throw "Failed to create hMailServer COM object."
+    }
+
+    $hmail.Authenticate($HmailAdminUser, $adminPass)
+    Write-Host "Connected to hMailServer successfully."
+
+    Write-Host "Domain count returned by hMailServer: $($hmail.Domains.Count)"
+
+    $domain = $null
+
+    for ($i = 0; $i -lt $hmail.Domains.Count; $i++) {
+        $d = $hmail.Domains.Item($i)
+        Write-Host ("Found hMailServer domain [{0}]: [{1}]" -f $i, $d.Name)
+
+        if ($d.Name -ieq $MailDomain) {
+            $domain = $d
+            Write-Host "Matched target mail domain: [$MailDomain]"
+            break
+        }
+    }
 
     if (-not $domain) {
         throw "Mail domain not found: $MailDomain"
     }
 
-    Write-Host "Using mail domain: $MailDomain"
+    Write-Host "Using mail domain: $($domain.Name)"
 }
 catch {
     throw "Failed during hMailServer connection/domain lookup. $($_.Exception.Message)"
 }
-
 # =========================
 # Step 3 - Mailbox
 # =========================
