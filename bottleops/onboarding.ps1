@@ -81,6 +81,26 @@ function Ensure-ImapFolders {
     return $created
 }
 
+function Get-HMailDomainByName {
+    param(
+        $Hmail,
+        [string]$DomainName
+    )
+
+    if (-not $Hmail) {
+        return $null
+    }
+
+    for ($i = 0; $i -lt $Hmail.Domains.Count; $i++) {
+        $d = $Hmail.Domains.Item($i)
+        if ($d.Name -ieq $DomainName) {
+            return $d
+        }
+    }
+
+    return $null
+}
+
 function Add-MailboxToDistributionList {
     param(
         $Domain,
@@ -208,12 +228,12 @@ Write-Host "=== Step 2: hMailServer Connection ==="
 
 try {
     $hmail = Get-HMailConnection
-    $domain = $hmail.Domains.ItemByName($MailDomain)
+    $domain = Get-HMailDomainByName -Hmail $hmail -DomainName $MailDomain
 
     if (-not $domain) {
         throw "Mail domain not found in hMailServer: $MailDomain"
     }
-
+    
     Write-Host "Connected to hMailServer domain: $MailDomain"
 }
 catch {
