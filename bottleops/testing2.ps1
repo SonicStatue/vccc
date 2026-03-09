@@ -302,6 +302,11 @@ try {
         $account.Password = "TempMailbox123!"
         $account.Active = $true
         $account.MaxSize = 0
+        
+        # Enable AD authentication
+        $account.IsAD = $true
+        $account.ADUsername = $Username
+        $account.ADDomain = "BOTTLEOPS"
         $account.Save()
 
         Write-Host "Created mailbox: $MailboxAddress"
